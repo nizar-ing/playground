@@ -8,14 +8,22 @@ interface Post {
     userId: number;
 }
 
-const usePosts = () => {
-    const fetchPosts = () => axios.get<Post[]>('https://jsonplaceholder.typicode.com/posts')
-        .then((res) => res.data);
+interface PostQuery {
+    page: number;
+    pageSize: number;
+}
 
+const usePosts = (query: PostQuery) => {
     return useQuery<Post[], Error>({
-        queryKey: ['posts'],
-        queryFn: fetchPosts,
-        staleTime: 10 * 1000
+        queryKey: ['posts', query],
+        queryFn: () => axios.get<Post[]>('https://jsonplaceholder.typicode.com/posts', {
+            params: {
+                _start: (query.page - 1) * query.pageSize,
+                _limit: query.pageSize
+            }
+        }).then((res) => res.data),
+        staleTime: 60 * 1000,
+        keepPreviousData: true
     });
 }
 export default usePosts;

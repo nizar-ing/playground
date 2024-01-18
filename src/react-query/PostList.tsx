@@ -1,7 +1,5 @@
-/*import axios from 'axios';
-import { useEffect, useState } from 'react';*/
-
-
+/*import axios from 'axios';*/
+import { useState } from 'react';
 
 import usePosts from "./hooks/usePosts";
 
@@ -15,19 +13,25 @@ const PostList = () => {
       .then((res) => setPosts(res.data))
       .catch((error) => setError(error));
   }, []);*/
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const {data: posts, error, isLoading} = usePosts({page, pageSize});
 
-  const {data: posts, error, isLoading} = usePosts();
 
   if (error) return <p>{error.message}</p>;
   if(isLoading) return <p>Is Loading ...isLoading</p>
   return (
-    <ul className="list-group">
-      {posts?.map((post) => (
-        <li key={post.id} className="list-group-item">
-          {post.title}
-        </li>
-      ))}
-    </ul>
+     <>
+       <ul className="list-group">
+         {posts?.map((post) => (
+             <li key={post.id} className="list-group-item">
+               {post.title}
+             </li>
+         ))}
+       </ul>
+       <button disabled={page === 1} className="btn btn-primary my-3" onClick={() => setPage((p) => p - 1)}>Previous</button>
+       <button className="btn btn-primary my-3 ms-1" onClick={() => setPage((p) => p + 1)}>Next</button>
+     </>
   );
 };
 
