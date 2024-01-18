@@ -6,6 +6,7 @@ import App from './App';
 
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
+import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ ReactDOM.createRoot(
     <React.StrictMode>
         <QueryClientProvider client={queryClient}>
             <App/>
+            <ReactQueryDevtools />
         </QueryClientProvider>
     </React.StrictMode>
 );
