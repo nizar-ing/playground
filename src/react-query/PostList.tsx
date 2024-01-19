@@ -1,5 +1,5 @@
 /*import axios from 'axios';*/
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import usePosts from "./hooks/usePosts";
 
@@ -13,9 +13,8 @@ const PostList = () => {
       .then((res) => setPosts(res.data))
       .catch((error) => setError(error));
   }, []);*/
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
-  const {data: posts, error, isLoading} = usePosts({page, pageSize});
+   const pageSize = 10;
+  const {data: posts, error, isLoading, fetchNextPage, isFetchingNextPage} = usePosts({pageSize});
 
 
   if (error) return <p>{error.message}</p>;
@@ -23,14 +22,20 @@ const PostList = () => {
   return (
      <>
        <ul className="list-group">
-         {posts?.map((post) => (
-             <li key={post.id} className="list-group-item">
-               {post.title}
-             </li>
-         ))}
+           {
+               posts?.pages.map((page, index) => (<React.Fragment key={index}>
+                   {
+                       page.map((post) => <li key={post.id} className="list-group-item">
+                           {post.title}
+                       </li>)
+                   }
+               </React.Fragment>)
+               )
+           }
        </ul>
-       <button disabled={page === 1} className="btn btn-primary my-3" onClick={() => setPage((p) => p - 1)}>Previous</button>
-       <button className="btn btn-primary my-3 ms-1" onClick={() => setPage((p) => p + 1)}>Next</button>
+       <button className="btn btn-primary my-3 ms-1" disabled={isFetchingNextPage} onClick={() => fetchNextPage()}>
+           {isFetchingNextPage ? '... is loading' : 'Load More'}
+       </button>
      </>
   );
 };
